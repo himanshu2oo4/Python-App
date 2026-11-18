@@ -17,10 +17,17 @@ def info():
     })
 
 @app.route('/api/v1/healthz')
-
 def health():
 	# Do an actual check here
     return jsonify({'status': 'up'}), 200
+
+
+@app.route("/data")
+def data(name: str="himanshu"):
+    return f"<h1> This page is invoked by {name} </h1>" 
+
+
+
 
 if __name__ == '__main__':
 
