@@ -18,7 +18,7 @@ jobs:
 
             - name: Calculate short SHA
               shell: bash 
-              run: echo "short_sha=${{ github.sha::0:7 }}" >> "$GITHUB_OUTPUT"
+              run: echo "short_sha=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
               id: calc_sha
             
             
