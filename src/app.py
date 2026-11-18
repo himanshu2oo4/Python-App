@@ -21,12 +21,12 @@ def health():
 	# Do an actual check here
     return jsonify({'status': 'up'}), 200
 
-
 @app.route("/data")
+@app.route("/data/<name>")
 def data(name: str="himanshu"):
     return f"<h1> This page is invoked by {name} </h1>" 
 
-
+# you can invoke this data using /data/randomName 
 
 
 if __name__ == '__main__':
