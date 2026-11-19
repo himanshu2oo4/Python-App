@@ -1,15 +1,17 @@
-name: CI pipeline
+name: CI-CD pipeline
 on: 
     push: 
         branches: 
             - main
+        paths: 
+            - src/**
         paths-ignore:
             - 'charts/**/values.yaml'
     workflow_dispatch: 
 permissions: 
     contents: write 
 jobs: 
-    docker: 
+    CI: 
         runs-on: self-hosted
         steps: 
             - uses: actions/checkout@v4
@@ -33,7 +35,7 @@ jobs:
               with:
                 driver: docker
 
-                
+
             - name: Build and push
               uses: docker/build-push-action@v6
               with: 
@@ -49,3 +51,18 @@ jobs:
                 git add charts/python-app/values.yaml
                 git commit -m "ci: update image tag to ${{ steps.calc_sha.outputs.short_sha }}"
                 git push
+
+
+    CD: 
+      needs: CI 
+      runs-on: self-hosted 
+      steps : 
+          - name: Argocd sync 
+            shell: bash 
+            run: | 
+               argocd login argocd-server.argocd \
+                --insecure --grpc-web \
+                --username admin \
+                --password ${{ secrets.ARGOCD_PASSWORD }}
+
+               argocd app sync python-app 
