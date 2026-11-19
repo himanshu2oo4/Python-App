@@ -64,12 +64,15 @@ jobs:
               chmod +x "$HOME/bin/argocd"
               echo "$HOME/bin" >> "$GITHUB_PATH"
               "$HOME/bin/argocd" version --client
-          - name: Argocd sync 
-            shell: bash 
-            run: | 
-               argocd login argocd-server.argocd \
+          - name: Argo CD sync
+            shell: bash
+            env:
+              ARGOCD_PASSWORD: ${{ secrets.ARGOCD_PASSWORD }}
+            run: |
+              argocd login argocd-server.argocd \
                 --insecure --grpc-web \
                 --username admin \
-                --password ${{ secrets.ARGOCD_PASSWORD }}
+                --password "$ARGOCD_PASSWORD"
 
-               argocd app sync python-app 
+              argocd app sync python-app
+              argocd app wait python-app --health --timeout 300
