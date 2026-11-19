@@ -56,21 +56,19 @@ jobs:
       runs-on: self-hosted 
       steps : 
           - name: Install Argo CD CLI
+            shell: bash
             run: |
-              ARGOCD_VERSION=v2.13.2
-              mkdir -p "$HOME/bin"
-              curl -fsSL -o "$HOME/bin/argocd" \
-                "https://github.com/argoproj/argo-cd/releases/download/${ARGOCD_VERSION}/argocd-linux-amd64"
-              chmod +x "$HOME/bin/argocd"
-              echo "$HOME/bin" >> "$GITHUB_PATH"
-              "$HOME/bin/argocd" version --client
+                  curl -ksSL -o argocd-linux-amd64 https://argocd-server.argocd/download/argocd-linux-amd64
+                  chmod +x argocd 
+                  mv ./argocd /usr/local/bin/argocd 
+
           - name: Argo CD sync
             shell: bash
             env:
               ARGOCD_PASSWORD: ${{ secrets.ARGOCD_PASSWORD }}
             run: |
               argocd login argocd-server.argocd \
-                --plaintext --grpc-web \
+                --insecure --grpc-web \
                 --username admin \
                 --password "$ARGOCD_PASSWORD"
 
