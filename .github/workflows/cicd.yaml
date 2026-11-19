@@ -10,6 +10,8 @@ permissions:
     contents: write 
 jobs: 
     CI: 
+        outputs: 
+          commit_id : ${{ steps.calc_sha.outputs.short_sha }}
         runs-on: self-hosted
         steps: 
             - uses: actions/checkout@v4
@@ -54,7 +56,10 @@ jobs:
     CD: 
       needs: CI 
       runs-on: self-hosted 
+      env : 
+          commit_id: ${{needs.CI.outputs.commit_id}}
       steps : 
+           
           - name: Install Argo CD CLI
             run: |
               ARGOCD_VERSION=v2.13.2
